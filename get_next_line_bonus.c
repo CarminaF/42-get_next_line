@@ -12,9 +12,9 @@
 
 #include "get_next_line_bonus.h"
 
-size_t	ft_strlen(char *s)
+int	ft_strlen(char *s)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
 	while (s[i])
@@ -31,10 +31,17 @@ char	*trim_line_and_get_leftover(char *line)
 	leftover = NULL;
 	while (line[i] != '\0' && line[i] != '\n')
 		i++;
-	if (line[i] == '\0')
+	if (line[i] == '\0' || line[1] == '\0')
 		return (leftover);
 	if (line[i + 1] != '\0')
-		leftover = ft_substr(line, i + 1, ft_strlen(line) - i);
+	{
+		leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
+		if (!*leftover)
+		{
+			free(leftover);
+			leftover = NULL;
+		}
+	}
 	line[i + 1] = '\0';
 	return (leftover);
 }
@@ -45,7 +52,7 @@ char	*find_new_line(int fd, char *buffer, char *unread_string)
 	char	*temp;
 
 	bytes_read = 1;
-	while (bytes_read)
+	while (bytes_read != '\0')
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
@@ -58,6 +65,7 @@ char	*find_new_line(int fd, char *buffer, char *unread_string)
 		temp = unread_string;
 		unread_string = ft_strjoin(temp, buffer);
 		free(temp);
+		temp = NULL;
 		if (ft_strchr(buffer, '\n'))
 			break ;
 	}
@@ -68,9 +76,9 @@ char	*get_next_line(int fd)
 {
 	char		*buffer;
 	char		*line;
-	static char	*unread_string[1024];
+	static char	*unread_string[FOPEN_MAX];
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || fd >= 1024 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > FOPEN_MAX || read(fd, 0, 0) < 0)
 		return (NULL);
 	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buffer)
