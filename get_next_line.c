@@ -6,7 +6,7 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 12:48:06 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/05 17:43:48 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/09 16:41:06 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,62 +32,52 @@ char	*trim_line_and_get_leftover(char *line)
 	while (line[i] != '\0' && line[i] != '\n')
 		i++;
 	if (line[i] == '\0' || line[1] == '\0')
-		return (leftover);
-	if (line[i + 1] != '\0')
+		return (NULL);
+	leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
+	if (*leftover == '\0')
 	{
-		leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
-		if (!*leftover)
-		{
-			free(leftover);
-			leftover = NULL;
-		}
+		free(leftover);
+		leftover = NULL;
 	}
 	line[i + 1] = '\0';
 	return (leftover);
 }
 
-char	*find_new_line(int fd, char *buffer, char *unread_string)
+char	*find_new_line(int fd, char *unread_string)
 {
 	int		bytes_read;
-	char	*temp;
+	char	*buffer;
 
+	buffer = (char *) malloc ((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (0);
 	bytes_read = 1;
-	while (bytes_read != '\0')
+	while (!ft_strchr(unread_string, '\n') && bytes_read != 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
+		{
+			free (buffer);
 			return (NULL);
-		if (bytes_read == 0)
-			break ;
+		}
 		buffer[bytes_read] = '\0';
-		if (!unread_string)
-			unread_string = ft_strdup("");
-		temp = unread_string;
-		unread_string = ft_strjoin(temp, buffer);
-		free(temp);
-		temp = NULL;
-		if (ft_strchr(buffer, '\n'))
-			break ;
+		unread_string = ft_strjoin(unread_string, buffer);
 	}
+	free (buffer);
 	return (unread_string);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buffer;
 	char		*line;
 	static char	*unread_string[FOPEN_MAX];
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > FOPEN_MAX || read(fd, 0, 0) < 0)
 		return (NULL);
-	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buffer)
-		return (NULL);
-	line = find_new_line(fd, buffer, unread_string[fd]);
-	free(buffer);
-	buffer = NULL;
+	unread_string[fd] = find_new_line(fd, unread_string[fd]);
 	if (!line)
 		return (line);
+	line
 	unread_string[fd] = trim_line_and_get_leftover(line);
 	return (line);
 }
