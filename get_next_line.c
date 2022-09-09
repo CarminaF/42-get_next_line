@@ -6,7 +6,7 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 12:48:06 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/05 17:43:48 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/09 23:58:02 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ char	*get_next_line(int fd)
 	free(buffer);
 	buffer = NULL;
 	if (!line)
-		return (line);
+		return (NULL);
 	unread_string[fd] = trim_line_and_get_leftover(line);
 	return (line);
 }
