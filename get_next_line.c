@@ -6,13 +6,13 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 12:48:06 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/09 16:41:06 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/09 18:45:23 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strlen(char *s)
+int	ft_strlen(const char *s)
 {
 	int	i;
 
