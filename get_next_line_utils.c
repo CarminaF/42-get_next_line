@@ -6,13 +6,13 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 12:48:34 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/09 18:43:52 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/09 23:17:21 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strchr(char *s, int c)
+char	*ft_strchr(const char *s, int c)
 {
 	int	i;
 	int	len;
@@ -35,7 +35,7 @@ int	get_min(int a, int b)
 	return (b);
 }
 
-char	*ft_substr(char *s, int start, int len)
+char	*ft_substr(char const *s, int start, int len)
 {
 	char	*p;
 	int		i;
@@ -87,7 +87,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (res);
 }
 
-char	*ft_strdup(char *s1)
+char	*ft_strdup(const char *s1)
 {
 	int		i;
 	char	*res;

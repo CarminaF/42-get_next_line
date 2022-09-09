@@ -6,13 +6,13 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 16:28:34 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/09 16:41:03 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/09 23:13:39 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-int	ft_strlen(char *s)
+int	ft_strlen(const char *s)
 {
 	int	i;
 
@@ -31,30 +31,36 @@ char	*trim_line_and_get_leftover(char *line)
 	leftover = NULL;
 	while (line[i] != '\0' && line[i] != '\n')
 		i++;
-	if (line[i] == '\0' || line[1] == '\0')
-		return (NULL);
-	leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
-	if (*leftover == '\0')
-	{
-		free(leftover);
-		leftover = NULL;
-	}
+	if (line[i] == '\0')
+		return (leftover);
+	if (line[i + 1] != '\0')
+		leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
 	line[i + 1] = '\0';
 	return (leftover);
 }
 
-char	*find_new_line(int fd, char *buffer, char *unread_string)
+static char	*find_new_line(int fd, char *buffer, char *unread_string)
 {
-	int	bytes_read;
+	int		bytes_read;
+	char	*temp;
 
 	bytes_read = 1;
-	while (!ft_strchr(unread_string, '\n') && bytes_read != 0)
+	while (bytes_read != 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
 			return (NULL);
+		else if (bytes_read == 0)
+			break ;
 		buffer[bytes_read] = '\0';
-		unread_string = ft_strjoin(unread_string, buffer);
+		if (!unread_string)
+			unread_string = ft_strdup("");
+		temp = unread_string;
+		unread_string = ft_strjoin(temp, buffer);
+		free(temp);
+		temp = NULL;
+		if (ft_strchr(buffer, '\n'))
+			break ;
 	}
 	return (unread_string);
 }
