@@ -6,7 +6,7 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 12:48:06 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/10 11:24:12 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/12 18:37:16 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,47 +22,70 @@ int	ft_strlen(const char *s)
 	return (i);
 }
 
-static char	*trim_line_and_get_leftover(char *line)
+char	*get_trimmed_line(char *str, int new_line_pos)
 {
 	int		i;
-	char	*leftover;
-
+	char	*trimmed;
+	
+	if (new_line_pos == 0)
+		new_line_pos = ft_strlen(str);
+	printf("new_line_pos is: %i\n", new_line_pos);
+	trimmed = (char *) malloc (sizeof(char) * (new_line_pos + 1));
 	i = 0;
-	leftover = NULL;
-	while (line[i] != '\0' && line[i] != '\n')
+	trimmed[i] = '\0';
+	while (i < new_line_pos)
+	{
+		trimmed[i] = str[i];
 		i++;
-	if (!line[i])
-		return (leftover);
-	if (line[i + 1] != '\0')
-		leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
-	line[i + 1] = '\0';
-	return (leftover);
+	}
+	free(str);
+	return (trimmed);
 }
 
-static char	*find_new_line(int fd, char *buffer, char *unread_string)
+char	*find_new_line_with_leftover(int fd, char *buffer, char *str)
 {
 	int		bytes_read;
 	char	*temp;
+	int		i;
 
 	bytes_read = 1;
-	while (bytes_read != 0)
+	i = 0;
+	while (!new_line_position(buffer) && bytes_read != 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		printf("bytes_read: %i\nwhile loop iteration:%i\n", bytes_read, ++i);
 		if (bytes_read == -1)
 			return (NULL);
-		else if (bytes_read == 0)
+		if (bytes_read == 0)
 			break ;
 		buffer[bytes_read] = '\0';
-		if (!unread_string)
-			unread_string = ft_strdup("");
-		temp = unread_string;
-		unread_string = ft_strjoin(temp, buffer);
+		if (!str)
+			str = ft_strdup("");
+		temp = str;
+		str = ft_strjoin(temp, buffer);
 		free(temp);
 		temp = NULL;
-		if (ft_strchr(buffer, '\n'))
-			break ;
 	}
-	return (unread_string);
+	return (str);
+}
+
+char	*get_leftover(char *str, int pos)
+{
+	char	*leftover;
+	int		leftover_len;
+	int		i;
+	int		j;
+	
+	if (pos == 0)
+		return (NULL);
+	leftover_len = ft_strlen(str) - pos;
+	leftover = (char *)malloc(sizeof(char) * (leftover_len + 1));
+	i = 0;
+	j = pos;
+	while (j <= leftover_len)
+		leftover[i++] = str[j++];
+	leftover[i] = '\0';
+	return (leftover);
 }
 
 char	*get_next_line(int fd)
@@ -74,13 +97,30 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > FOPEN_MAX || read(fd, 0, 0) < 0)
 		return (NULL);
 	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buffer)
-		return (NULL);
-	line = find_new_line(fd, buffer, unread_string[fd]);
+	unread_string[fd] = find_new_line_with_leftover(fd, buffer, unread_string[fd]);
 	free(buffer);
 	buffer = NULL;
-	if (!line)
+	if (!unread_string[fd])
 		return (NULL);
-	unread_string[fd] = trim_line_and_get_leftover(line);
+	line = get_trimmed_line(unread_string[fd], new_line_position(unread_string[fd]));
+	unread_string[fd] = get_leftover(line, new_line_position(line));
 	return (line);
+}
+
+int	main(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open("test.txt", O_RDONLY);
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (line)
+			printf("gnl return: %s", line);
+		else 
+			break ;
+		free (line);
+	}
+	close (fd);
 }

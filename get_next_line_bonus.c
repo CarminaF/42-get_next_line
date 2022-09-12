@@ -6,7 +6,7 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 16:28:34 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/09 23:58:11 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/10 11:24:09 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*trim_line_and_get_leftover(char *line)
+static char	*trim_line_and_get_leftover(char *line)
 {
 	int		i;
 	char	*leftover;
@@ -31,7 +31,7 @@ char	*trim_line_and_get_leftover(char *line)
 	leftover = NULL;
 	while (line[i] != '\0' && line[i] != '\n')
 		i++;
-	if (line[i] == '\0')
+	if (!line[i])
 		return (leftover);
 	if (line[i + 1] != '\0')
 		leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));

@@ -6,26 +6,28 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 12:48:34 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/10 17:29:33 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/10 18:36:35 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strchr(const char *s, int c)
+int	new_line_position(const char *s)
 {
 	int	i;
 	int	len;
 
+	if (!s)
+		return (0);
 	i = 0;
 	len = ft_strlen(s);
-	while (i <= len)
+	while (i < len)
 	{
-		if (s[i] == (char)c)
-			return ((char *)&s[i]);
+		if (s[i] == '\n')
+			return (i + 1);
 		i++;
 	}
-	return (NULL);
+	return (0);
 }
 
 int	get_min(int a, int b)
