@@ -6,7 +6,7 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 16:29:47 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/09 23:17:21 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/10 16:25:34 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,11 @@ int	get_min(int a, int b)
 char	*ft_substr(char const *s, int start, int len)
 {
 	char	*p;
-	int		i;
 	int		j;
 
 	if (start >= ft_strlen(s))
 	{
-		p = malloc(sizeof(char));
+		p = (char *)malloc(sizeof(char));
 		if (!p)
 			return (NULL);
 		else
@@ -51,13 +50,12 @@ char	*ft_substr(char const *s, int start, int len)
 		return (p);
 	}
 	len = get_min(len, ft_strlen(s) - start);
-	p = malloc(sizeof(char) * len + 1);
+	p = (char *)malloc(sizeof(char) * (len + 1));
 	if (!p || !s)
 		return (NULL);
-	i = start;
 	j = 0;
-	while (i < ft_strlen(s) && j < len)
-		p[j++] = s[i++];
+	while (start < ft_strlen(s) && j < len)
+		p[j++] = s[start++];
 	p[j] = '\0';
 	return (p);
 }
@@ -68,7 +66,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 	int		j;
 
-	res = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	res = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!res || !s1 || !s2)
 		return (NULL);
 	i = 0;
@@ -90,13 +88,15 @@ char	*ft_strjoin(char *s1, char *s2)
 char	*ft_strdup(const char *s1)
 {
 	int		i;
+	int		len;
 	char	*res;
 
 	i = 0;
-	res = (char *) malloc ((ft_strlen(s1) + 1) * sizeof (char));
+	len = ft_strlen(s1);
+	res = (char *) malloc ((len + 1) * sizeof (*s1));
 	if (!res)
 		return (NULL);
-	while (s1[i])
+	while (i < len)
 	{
 		res[i] = s1[i];
 		i++;
