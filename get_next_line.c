@@ -6,7 +6,7 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/18 12:48:06 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/12 18:37:16 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/13 17:12:28 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*get_trimmed_line(char *str, int new_line_pos)
 	
 	if (new_line_pos == 0)
 		new_line_pos = ft_strlen(str);
-	printf("new_line_pos is: %i\n", new_line_pos);
+	//printf("new_line_pos is: %i\n", new_line_pos);
 	trimmed = (char *) malloc (sizeof(char) * (new_line_pos + 1));
 	i = 0;
 	trimmed[i] = '\0';
@@ -38,7 +38,8 @@ char	*get_trimmed_line(char *str, int new_line_pos)
 		trimmed[i] = str[i];
 		i++;
 	}
-	free(str);
+	free (str);
+	str = NULL;
 	return (trimmed);
 }
 
@@ -50,10 +51,10 @@ char	*find_new_line_with_leftover(int fd, char *buffer, char *str)
 
 	bytes_read = 1;
 	i = 0;
-	while (!new_line_position(buffer) && bytes_read != 0)
+	while (!new_line_position(str))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		printf("bytes_read: %i\nwhile loop iteration:%i\n", bytes_read, ++i);
+		//printf("bytes_read: %i\nwhile loop iteration:%i\n", bytes_read, ++i);
 		if (bytes_read == -1)
 			return (NULL);
 		if (bytes_read == 0)
@@ -76,15 +77,20 @@ char	*get_leftover(char *str, int pos)
 	int		i;
 	int		j;
 	
-	if (pos == 0)
-		return (NULL);
+	leftover = NULL;
 	leftover_len = ft_strlen(str) - pos;
-	leftover = (char *)malloc(sizeof(char) * (leftover_len + 1));
-	i = 0;
-	j = pos;
-	while (j <= leftover_len)
-		leftover[i++] = str[j++];
-	leftover[i] = '\0';
+	if (leftover_len != ft_strlen(str) && leftover_len > 0)
+	{
+		leftover = (char *)malloc(sizeof(char) * (leftover_len + 1));
+		i = 0;
+		j = pos;
+		while (j <= leftover_len)
+		{
+			//printf("j is : %i\n", j);
+			leftover[i++] = str[j++];
+		}
+		leftover[i] = '\0';
+	}
 	return (leftover);
 }
 
@@ -98,6 +104,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
 	unread_string[fd] = find_new_line_with_leftover(fd, buffer, unread_string[fd]);
+	//printf("unread_string[fd]: %s\n", unread_string[fd]);
 	free(buffer);
 	buffer = NULL;
 	if (!unread_string[fd])
@@ -106,7 +113,7 @@ char	*get_next_line(int fd)
 	unread_string[fd] = get_leftover(line, new_line_position(line));
 	return (line);
 }
-
+/*
 int	main(void)
 {
 	int		fd;
@@ -123,4 +130,4 @@ int	main(void)
 		free (line);
 	}
 	close (fd);
-}
+}*/
