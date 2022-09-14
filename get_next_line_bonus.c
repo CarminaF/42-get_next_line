@@ -17,7 +17,9 @@ int	ft_strlen(const char *s)
 	int	i;
 
 	i = 0;
-	while (s[i])
+	if (!s)
+		return (0);
+	while (s[i] != '\0')
 		i++;
 	return (i);
 }
@@ -29,6 +31,8 @@ char	*trim_line_and_get_leftover(char *line)
 
 	i = 0;
 	leftover = NULL;
+	if (!line[i])
+		return (NULL);
 	while (line[i] != '\0' && line[i] != '\n')
 		i++;
 	if (line[i] == '\0')
@@ -39,7 +43,7 @@ char	*trim_line_and_get_leftover(char *line)
 	return (leftover);
 }
 
-static char	*find_new_line(int fd, char *buffer, char *unread_string)
+char	*find_new_line(int fd, char *buffer, char *unread_string)
 {
 	int		bytes_read;
 	char	*temp;

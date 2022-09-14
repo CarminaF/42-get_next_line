@@ -17,21 +17,25 @@ int	ft_strlen(const char *s)
 	int	i;
 
 	i = 0;
-	while (s[i])
+	if (!s)
+		return (0);
+	while (s[i] != '\0')
 		i++;
 	return (i);
 }
 
-static char	*trim_line_and_get_leftover(char *line)
+char	*trim_line_and_get_leftover(char *line)
 {
 	int		i;
 	char	*leftover;
 
 	i = 0;
 	leftover = NULL;
+	if (!line[i])
+		return (NULL);
 	while (line[i] != '\0' && line[i] != '\n')
 		i++;
-	if (!line[i])
+	if (line[i] == '\0')
 		return (leftover);
 	if (line[i + 1] != '\0')
 		leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
@@ -39,7 +43,7 @@ static char	*trim_line_and_get_leftover(char *line)
 	return (leftover);
 }
 
-static char	*find_new_line(int fd, char *buffer, char *unread_string)
+char	*find_new_line(int fd, char *buffer, char *unread_string)
 {
 	int		bytes_read;
 	char	*temp;
@@ -84,3 +88,23 @@ char	*get_next_line(int fd)
 	unread_string[fd] = trim_line_and_get_leftover(line);
 	return (line);
 }
+/*
+int	main(void)
+{
+	char	*line1;
+	int	fd1;
+
+	fd1 = open("test1.txt", O_RDONLY);
+
+	while (1)
+	{
+		line1 = get_next_line(fd1);
+		if (line1)
+			printf("gnl return: %s", line1);
+		else
+			break ;
+		free(line1);
+	}
+	close(fd1);
+	return (0);
+}*/

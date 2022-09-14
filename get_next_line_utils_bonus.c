@@ -6,7 +6,7 @@
 /*   By: cfamilar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/01 16:29:47 by cfamilar          #+#    #+#             */
-/*   Updated: 2022/09/10 16:25:34 by cfamilar         ###   ########.fr       */
+/*   Updated: 2022/09/14 18:50:52 by cfamilar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*ft_strchr(const char *s, int c)
 			return ((char *)&s[i]);
 		i++;
 	}
-	return (NULL);
+	return (0);
 }
 
 int	get_min(int a, int b)
