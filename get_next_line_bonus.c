@@ -12,79 +12,95 @@
 
 #include "get_next_line_bonus.h"
 
-int	ft_strlen(const char *s)
-{
-	int	i;
-
-	i = 0;
-	if (!s)
-		return (0);
-	while (s[i] != '\0')
-		i++;
-	return (i);
-}
-
 char	*trim_line_and_get_leftover(char *line)
 {
 	int		i;
+	int		j;
 	char	*leftover;
 
 	i = 0;
-	leftover = NULL;
-	if (!line[i])
-		return (NULL);
 	while (line[i] != '\0' && line[i] != '\n')
 		i++;
-	if (line[i] == '\0')
-		return (leftover);
-	if (line[i + 1] != '\0')
-		leftover = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
-	line[i + 1] = '\0';
+	if (!line[i])
+	{
+		free (line);
+		return (0);
+	}
+	leftover = (char *) malloc (sizeof(char) * (ft_strlen(line) - i + 1));
+	if (!leftover)
+		return (0);
+	j = 0;
+	i++;
+	while (line[i])
+		leftover[j++] = line[i++];
+	leftover[j] = '\0';
+	free (line);
 	return (leftover);
 }
 
-char	*find_new_line(int fd, char *buffer, char *unread_string)
+char	*find_new_line(char *str)
 {
-	int		bytes_read;
-	char	*temp;
+	int		i;
+	char	*line;
 
+	i = 0;
+	if (!str[i])
+		return (0);
+	while (str[i] && str[i] != '\n')
+		i++;
+	line = (char *)malloc(sizeof(char) * (i + 2));
+	if (!line)
+		return (0);
+	i = 0;
+	while (str[i] && str[i] != '\n')
+	{
+		line[i] = str[i];
+		i++;
+	}
+	if (str[i] == '\n')
+	{
+		line[i] = str[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
+}
+
+char	*buffer_read(int fd, char *str)
+{
+	char	*buffer;
+	int		bytes_read;
+
+	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (0);
 	bytes_read = 1;
-	while (bytes_read != 0)
+	while (!ft_strchr(str, '\n') && bytes_read != 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
-			return (NULL);
-		else if (bytes_read == 0)
-			break ;
+		{
+			free (buffer);
+			return (0);
+		}
 		buffer[bytes_read] = '\0';
-		if (!unread_string)
-			unread_string = ft_strdup("");
-		temp = unread_string;
-		unread_string = ft_strjoin(temp, buffer);
-		free(temp);
-		temp = NULL;
-		if (ft_strchr(buffer, '\n'))
-			break ;
+		str = ft_strjoin(str, buffer);
 	}
-	return (unread_string);
+	free (buffer);
+	return (str);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buffer;
 	char		*line;
 	static char	*unread_string[FOPEN_MAX];
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > FOPEN_MAX || read(fd, 0, 0) < 0)
 		return (NULL);
-	buffer = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buffer)
-		return (NULL);
-	line = find_new_line(fd, buffer, unread_string[fd]);
-	free(buffer);
-	buffer = NULL;
-	if (!line)
-		return (NULL);
-	unread_string[fd] = trim_line_and_get_leftover(line);
+	unread_string[fd] = buffer_read(fd, unread_string[fd]);
+	if (!unread_string[fd])
+		return (0);
+	line = find_new_line(unread_string[fd]);
+	unread_string[fd] = trim_line_and_get_leftover(unread_string[fd]);
 	return (line);
 }

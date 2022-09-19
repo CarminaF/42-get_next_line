@@ -24,10 +24,8 @@
 # endif
 
 char	*ft_strchr(const char *s, int c);
-char	*ft_substr(char const *s, int start, int len);
 char	*ft_strjoin(char *s1, char *s2);
-char	*ft_strdup(const char *s1);
 char	*get_next_line(int fd);
-int		ft_strlen(const char *s);
+size_t	ft_strlen(const char *s);
 
 #endif
