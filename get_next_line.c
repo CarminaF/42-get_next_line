@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-char	*trim_line_and_get_leftover(char *line)
+char	*get_leftover(char *line)
 {
 	int		i;
 	int		j;
@@ -101,7 +101,7 @@ char	*get_next_line(int fd)
 	if (!unread_string[fd])
 		return (0);
 	line = find_new_line(unread_string[fd]);
-	unread_string[fd] = trim_line_and_get_leftover(unread_string[fd]);
+	unread_string[fd] = get_leftover(unread_string[fd]);
 	return (line);
 }
 /*
